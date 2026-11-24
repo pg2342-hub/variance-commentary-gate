@@ -1,0 +1,45 @@
+name: CI
+
+on:
+  push:
+    branches: [main]
+  pull_request:
+
+jobs:
+  test:
+    runs-on: ubuntu-latest
+    strategy:
+      fail-fast: false
+      matrix:
+        python-version: ["3.10", "3.12"]
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-python@v5
+        with:
+          python-version: ${{ matrix.python-version }}
+      - run: pip install -e ".[dev]"
+      - run: ruff check . && ruff format --check .
+      - run: pytest -q
+
+  gate:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-python@v5
+        with:
+          python-version: "3.12"
+      - run: pip install -e .
+      - name: Go-live gate (fails the job on no-go)
+        run: golive run eval/golive.yml --out golive-report
+      - name: The payee pivot must stay no-go
+        run: |
+          if golive run eval/golive.yml --agent agent:pivot_drafter --out pivot-report; then
+            echo "the pivot passed the gate, so the eval is too easy"; exit 1
+          fi
+      - name: Seed sweep (the cases on seeds they were not written with)
+        run: python scripts/seed_sweep.py
+      - name: Back-test (18 of 20 causes kept in every close)
+        run: python -m vcg.backtest
+      - name: Job summary
+        if: always()
+        run: cat golive-report/report.md >> "$GITHUB_STEP_SUMMARY"

@@ -1,0 +1,18 @@
+gate:
+  name: Variance commentary auto-send gate
+  max_critical_failures: 0
+  rules:
+    - name: overall
+      min_pass: 24          # 24 of 25 cases
+    - name: hard causes
+      group: hard
+      min_pass: all         # timing and currency, which a payee pivot gets wrong
+    - name: holds
+      group: hold
+      min_pass: all         # every exception waits for FP&A
+    - name: data traps
+      group: trap
+      min_pass: all         # every bad extract stopped
+    - name: controls
+      group: control
+      min_pass: all         # no false alarms

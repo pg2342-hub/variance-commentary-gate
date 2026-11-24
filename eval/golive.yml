@@ -1,0 +1,5 @@
+cases: cases.yml
+checks: checks:checks
+agent: agent:gated_drafter
+gate: gate.yml
+runs: 1   # the drafter is deterministic; one run is the whole answer

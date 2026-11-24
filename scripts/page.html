@@ -1,0 +1,194 @@
+<!doctype html><html lang="en"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1">
+<title>Variance commentary gate</title>
+<meta name="description" content="Drafts budget-vs-actual variance commentary that ties to the ledger and holds risky lines for FP&amp;A: 25 of 25 planted closes pass the auto-send gate; a payee pivot passes 7.">
+<style>
+/* Shared demo layout, copied from the approved pilots. Keep it; add page-specific rules below it. */
+
+.head{padding:8px 0 0}
+.head h1{margin:40px 0 14px}
+.head .lead{max-width:38em}
+/* verdict: the same 25 cases under the same gate, one square per case */
+.verdict{margin:36px 0 0;border:1px solid var(--rule);border-radius:16px;background:#fbfaf6;overflow:hidden}
+.vhead{display:flex;flex-wrap:wrap;align-items:baseline;justify-content:space-between;gap:8px 24px;padding:18px 24px;border-bottom:1px solid var(--rule)}
+.vhead h2{all:unset;font:400 22px/1.2 var(--serif)}
+.vhead p{margin:0;color:var(--ink-2);font-size:15px}
+.vhead p b{color:var(--ink)}
+.vrow,.arow{display:grid;grid-template-columns:minmax(0,15em) minmax(0,1fr) 7.5em 5.5em;align-items:center;gap:20px;padding:22px 24px}
+.vrow+.vrow{border-top:1px solid var(--rule-soft)}
+.vwho b,.awho b{display:block;font:400 20px/1.2 var(--serif)}
+.vwho span,.awho span{display:block;color:var(--ink-2);font-size:14px;line-height:1.4;margin-top:4px}
+.strip{display:grid;grid-template-columns:repeat(25,minmax(0,1fr));gap:4px}
+.cell{display:block;aspect-ratio:1;border-radius:4px;border:1.5px solid transparent;transition:transform .2s var(--ease),box-shadow .2s}
+.cell.pass{background:var(--green)}
+.cell.fail{background:var(--paper);border-color:var(--ink)}
+.cell.crit{background:var(--ink)}
+.cell:hover,.cell:focus-visible,.cell.lit{transform:translateY(-3px);box-shadow:0 6px 12px -6px rgb(27 26 23/.5)}
+.vscore b{font:400 44px/1 var(--serif)}
+.vscore span{display:block;color:var(--ink-2);font-size:13px;line-height:1.35;margin-top:4px}
+.gate{justify-self:end;display:inline-flex;align-items:center;justify-content:center;min-height:32px;padding:0 14px;border-radius:999px;font:500 13px/1 var(--mono);letter-spacing:.06em}
+.gate.go{background:var(--green-wash);color:var(--green)}
+.gate.nogo{background:var(--ink);color:var(--paper)}
+.legend{display:flex;flex-wrap:wrap;gap:6px 20px;padding:14px 24px;border-top:1px solid var(--rule);color:var(--ink-2);font-size:13px}
+.legend span{display:inline-flex;align-items:center;gap:8px}
+.legend i{width:12px;height:12px;border-radius:3px;border:1.5px solid transparent}
+.legend .pass{background:var(--green)}.legend .fail{border-color:var(--ink)}.legend .crit{background:var(--ink)}
+/* page body: content and a side column */
+.layout{display:grid;grid-template-columns:minmax(0,1fr) 270px;gap:56px;align-items:start;margin-top:8px}
+.side{position:sticky;top:24px;margin-top:64px;display:grid;gap:22px;font-size:14px;color:var(--ink-2)}
+.side h3{margin:0 0 6px;font:500 13px/1.3 var(--sans);color:var(--ink)}
+.side p{margin:0}
+.side nav a{display:block;padding:5px 0;color:var(--ink-2);text-decoration:none;border-bottom:1px solid var(--rule-soft)}
+.side nav a:hover{color:var(--ink)}
+.side pre{font-size:12px;margin:6px 0 0}
+.point{font-size:17px;max-width:40em;margin:0}
+.point b{font-weight:500}
+.seg{display:flex;width:fit-content;max-width:100%;flex-wrap:wrap;gap:2px;padding:3px;border:1px solid var(--rule);border-radius:999px;margin:0 0 16px;background:#fbfaf6}
+.seg button{min-height:34px;padding:0 14px;border:0;border-radius:999px;background:transparent;color:var(--ink-2);font:500 14px/1 var(--sans);cursor:pointer}
+.seg button span{font-weight:400;opacity:.8}
+.seg button[aria-checked=true]{background:var(--ink);color:var(--paper)}
+.n{font-family:var(--mono);font-size:13px}
+.tag{font:400 12px/1 var(--mono);border:1px solid var(--rule);border-radius:999px;padding:4px 8px;white-space:nowrap}
+.tx{max-width:340px}.ch{font-size:13px;color:var(--ink-2);margin-top:4px}
+.v{white-space:nowrap;font-weight:500}
+.v.ok{color:var(--green)}
+.v.bad{white-space:normal;color:var(--ink)}
+.v.bad.crit::before{content:"";display:inline-block;width:8px;height:8px;border-radius:2px;background:var(--ink);margin-right:6px;vertical-align:1px}
+.why{font-weight:400;font-size:13px;color:var(--ink-2);margin-top:4px;max-width:240px}
+#cases tr.lit td{background:var(--green-wash)}
+#cases tr{scroll-margin-top:24px}
+.abl{border:1px solid var(--rule);border-radius:16px;background:#fbfaf6;overflow:hidden}
+.arow{grid-template-columns:minmax(0,13em) minmax(0,1fr) 6.5em}
+.arow+.arow{border-top:1px solid var(--rule-soft)}
+.ascore{font:400 15px/1 var(--sans);color:var(--ink-2)}
+.ascore b{font:400 30px/1 var(--serif);color:var(--ink)}
+.ascore span{display:block;font-size:13px;margin-top:4px}
+.note{color:var(--ink-2);font-size:15px;max-width:44em;margin-top:14px}
+.rule{display:grid;grid-template-columns:1fr 1fr;gap:16px}
+.rule div{border:1px solid var(--rule);border-radius:16px;padding:20px 22px;background:#fbfaf6}
+.rule div:last-child{background:var(--ink);color:var(--paper);border-color:var(--ink)}
+.rule h3{margin:0 0 6px;font:400 22px/1.2 var(--serif)}
+.rule p{margin:0 0 10px;font-size:15px;opacity:.85}
+.rule ul{margin:0;font-size:15px}
+.rule div:last-child li::marker{color:rgb(244 242 236/.6)}
+.sev{font:500 12px/1 var(--mono);padding:4px 8px;border-radius:999px;border:1px solid var(--rule)}
+.sev-critical{background:var(--ink);color:var(--paper);border-color:var(--ink)}
+.sev-low{color:var(--ink-2)}
+@media (max-width:1000px){
+ .layout{grid-template-columns:minmax(0,1fr);gap:0}
+ .side{position:static;margin-top:48px;order:2}
+ .vrow{grid-template-columns:minmax(0,1fr) auto;gap:14px 16px}
+ .vrow .strip{grid-column:1/-1;grid-row:2}
+ .vscore{grid-row:3}.vrow .gate{grid-row:3}
+ .arow{grid-template-columns:minmax(0,1fr) auto;gap:12px 16px}
+ .arow .strip{grid-column:1/-1;grid-row:2}
+ .ascore{grid-column:2;grid-row:1}
+ .rule{grid-template-columns:1fr}
+}
+@media (max-width:640px){.vrow,.arow{padding:18px}.vhead{padding:16px 18px}.strip{gap:3px}.tx{max-width:none}}
+@media (prefers-reduced-motion:reduce){.cell{transition:none}}
+
+
+/* ---- page-specific rules ---- */
+.vhead p b{white-space:nowrap}
+.legend i,.btlegend i{flex:none}
+details{border:0}
+.nov{display:grid;grid-template-columns:repeat(auto-fill,minmax(min(100%,330px),1fr));gap:14px}
+.dept{border:1px solid var(--rule);border-radius:16px;background:#fbfaf6;padding:16px 18px}
+.dept h3{margin:0 0 8px;font:400 20px/1.2 var(--serif)}
+.dept ul{list-style:none;margin:0;padding:0}
+.dept li{padding:10px 0;border-top:1px solid var(--rule-soft)}
+.dept li:first-child{border-top:0;padding-top:2px}
+.dept li p{margin:6px 0 0;font-size:15px}
+.dept li p.hold{color:var(--ink-2);font-size:14px}
+.dept[hidden],.dept li[hidden]{display:none}
+.st{display:inline-flex;align-items:center;min-height:24px;padding:0 10px;border-radius:999px;font:500 12px/1 var(--mono);letter-spacing:.04em}
+.st.send{background:var(--green-wash);color:var(--green)}
+.st.held{background:var(--ink);color:var(--paper)}
+details{margin-top:8px;font-size:13px}
+details summary{cursor:pointer;color:var(--ink-2)}
+.qs{margin:8px 0 0;padding-left:18px}
+.qs li{border:0!important;padding:4px 0!important}
+.qs code{display:block;font:400 12px/1.45 var(--mono);color:var(--ink-2);overflow-wrap:anywhere;margin-top:2px}
+.qv{font:500 12px/1 var(--mono);font-variant-numeric:tabular-nums}
+.tiebar{display:flex;flex-wrap:wrap;gap:8px 24px;align-items:baseline;margin:0 0 16px;color:var(--ink-2);font-size:15px}
+.tiebar b{font:400 30px/1 var(--serif);color:var(--ink);margin-right:6px}
+.btwrap{border:1px solid var(--rule);border-radius:16px;background:#fbfaf6;padding:18px 20px 12px}
+svg.bt{width:100%;height:auto;display:block}
+svg.bt .k{fill:var(--green)}
+svg.bt .c{fill:var(--paper);stroke:var(--ink);stroke-width:1.5}
+svg.bt .gl{stroke:var(--ink);stroke-width:1.5;stroke-dasharray:4 4}
+svg.bt text{font-family:var(--sans);font-size:14px;fill:var(--ink);font-variant-numeric:tabular-nums}
+svg.bt .gt{font-family:var(--mono);font-size:11px;fill:var(--ink-2)}
+svg.bt .mc{font-family:var(--serif);font-size:20px}
+.btlegend{display:flex;flex-wrap:wrap;gap:6px 20px;color:var(--ink-2);font-size:13px;margin-top:10px}
+.btlegend span{display:inline-flex;align-items:center;gap:8px}
+.btlegend i{width:12px;height:12px;border-radius:3px;border:1.5px solid transparent}
+.btlegend .k{background:var(--green)}.btlegend .c{border-color:var(--ink)}
+.changed{font-size:15px;max-width:44em;padding-left:18px}
+.changed li{margin:6px 0}
+td.say{color:var(--ink-2);font-size:14px}
+.content h2{scroll-margin-top:24px}
+@media (max-width:640px){.dept{padding:14px}.tiebar b{font-size:26px}}
+</style></head><body><main>
+
+<div class="head">
+<h1>Variance commentary gate</h1>
+<p class="lead">Drafts each department's monthly budget-vs-actual commentary from NetSuite-style ledger lines, with the query behind every figure. It stops on a bad extract, ties every figure to the trial balance, and holds the risky lines for FP&amp;A before anything sends on its own.</p>
+</div>
+
+<section class="verdict" aria-labelledby="verdict-h">
+  <div class="vhead"><h2 id="verdict-h">Same 25 planted closes, same gate</h2><p>Gate to send without approval: <b>24 of 25</b>, every timing, currency, hold and bad-extract case, <b>zero critical errors</b></p></div>
+  {{VROWS}}
+  <div class="legend"><span><i class="pass"></i>Passed</span><span><i class="fail"></i>Failed</span><span><i class="crit"></i>Critical error (sent a figure that does not tie, sent a bad extract, or sent a line that should wait)</span><span>Each square is one case. Select one to read it.</span></div>
+</section>
+
+<div class="layout">
+<div class="content">
+  <h2 id="why">Why it matters</h2>
+  <p class="point">A wrong cause sent to a department head costs FP&amp;A more trust than the hours the draft saves. So the drafter only writes a number it can trace to a query, refuses to draft on an extract that does not match the ledger, and keeps three kinds of line on approval even after go-live: <b>a variance above {{HOLD}}</b>, <b>an account with no budget</b>, and <b>any entry posted after the books locked</b>.</p>
+
+  <h2 id="november">The November draft</h2>
+  <div class="tiebar"><span><b>{{TIEN}}</b>figures re-run against the trial balance and budget</span><span><b>{{TIEMAX}}</b>largest difference</span></div>
+  <div class="seg" role="radiogroup" aria-label="Show lines"><button type="button" role="radio" aria-checked="true" data-s="all">All&nbsp; <span>{{NALL}}</span></button><button type="button" role="radio" aria-checked="false" data-s="send">Sends&nbsp; <span>{{NSEND}}</span></button><button type="button" role="radio" aria-checked="false" data-s="held">Held for FP&amp;A&nbsp; <span>{{NHELD}}</span></button></div>
+  <div class="nov" id="nov">{{NOV}}</div>
+  <p class="note">A line of commentary is written when a department and account is at least {{MAT}} and 5% off budget, or has spend with no budget. Everything else stays out of the email.</p>
+
+  <h2 id="backtest">Back-test: does FP&amp;A keep the cause?</h2>
+  <p class="point">Before a live close, the drafter reruns the last three closes and FP&amp;A compares its causes with what they actually sent, for the 20 largest variances in each. The plan's bar is <b>18 of 20 in every close</b>. Kept here: <b>{{KEPT}}</b>.</p>
+  <div class="btwrap">{{BTSVG}}
+  <div class="btlegend"><span><i class="k"></i>FP&amp;A kept the drafted cause</span><span><i class="c"></i>FP&amp;A changed it</span><span>Hover a square for the variance.</span></div></div>
+  <p class="note">Every change is something only FP&amp;A could know from outside the ledger:</p>
+  <ul class="changed">{{CHANGED}}</ul>
+
+  <h2 id="traps">Bad extracts stop the draft</h2>
+  <div class="scroll"><table class="t"><thead><tr><th>Planted problem</th><th>What the drafter says</th><th></th></tr></thead><tbody>{{TRAPS}}</tbody></table></div>
+
+  <h2 id="cases">Every case</h2>
+  <div class="seg" role="radiogroup" aria-label="Filter cases"><button type="button" role="radio" aria-checked="true" data-t="all">All&nbsp; <span>25</span></button><button type="button" role="radio" aria-checked="false" data-t="routine">Routine</button><button type="button" role="radio" aria-checked="false" data-t="hard">Timing and currency</button><button type="button" role="radio" aria-checked="false" data-t="hold">Holds</button><button type="button" role="radio" aria-checked="false" data-t="trap">Bad extract</button><button type="button" role="radio" aria-checked="false" data-t="control">Quiet</button></div>
+  <div class="scroll"><table class="t" id="cases"><thead><tr><th>#</th><th>Group</th><th>Planted</th><th>A correct draft</th><th>Gated</th><th>Pivot</th></tr></thead><tbody>{{CASES}}</tbody></table></div>
+</div>
+
+<aside class="side" aria-label="About this build">
+  <nav aria-label="On this page"><a href="#why">Why it matters</a><a href="#november">The November draft</a><a href="#backtest">Back-test</a><a href="#traps">Bad extracts</a><a href="#cases">Every case</a></nav>
+  <div><h3>Data</h3><p>All data is synthetic: a made-up freight forwarder with 8 departments, a US and a European subsidiary, NetSuite-style journal lines, a trial balance and a vendor-level budget. Vendor names are public software and services used as realistic payees. FP&amp;A's answer key in the back-test is invented, with planted items only FP&amp;A would know.</p></div>
+  <div><h3>Run it yourself</h3><p>Python 3.9+, PyYAML and golive-gate.</p><pre>pip install -e ".[dev]"
+python -m vcg --sql
+golive run eval/golive.yml
+python -m vcg.backtest</pre></div>
+  <div><a class="pill" href="{{REPO}}">Code on GitHub</a></div>
+</aside>
+</div>
+</main>
+<script>
+document.querySelectorAll('.seg').forEach(g=>{const bs=[...g.querySelectorAll('button')];bs.forEach(b=>b.addEventListener('click',()=>{
+ bs.forEach(x=>x.setAttribute('aria-checked',String(x===b)));
+ if(b.dataset.t){const t=b.dataset.t;document.querySelectorAll('#cases tbody tr').forEach(r=>r.hidden=!(t==='all'||r.dataset.tier===t));}
+ if(b.dataset.s){const s=b.dataset.s;document.querySelectorAll('#nov .dept').forEach(d=>{let any=false;d.querySelectorAll(':scope > ul > li').forEach(li=>{const on=s==='all'||li.dataset.s===s;li.hidden=!on;any=any||on;});d.hidden=!any;});}
+}));});
+document.querySelectorAll('.cell').forEach(c=>c.addEventListener('click',()=>{
+ document.querySelectorAll('#cases tbody tr').forEach(r=>r.hidden=false);
+ document.querySelectorAll('.seg button[data-t]').forEach(x=>x.setAttribute('aria-checked',String(x.dataset.t==='all')));
+ document.querySelectorAll('#cases tr.lit').forEach(r=>r.classList.remove('lit'));
+ const row=document.getElementById('case-'+c.dataset.case); row&&row.classList.add('lit');
+}));
+</script></body></html>

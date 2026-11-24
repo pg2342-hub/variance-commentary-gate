@@ -1,0 +1,130 @@
+# 25 planted closes on a made-up freight forwarder (8 departments, US and Europe subsidiaries, November 2026).
+# input: the scenario the extract is built from. expected: what a correct draft must do.
+# Groups: routine (one visible driver), hard (a driver a payee pivot gets wrong), hold (must wait for FP&A),
+# trap (a data problem that must stop the draft), control (nothing planted, nothing flagged).
+cases:
+  - id: r01
+    group: routine
+    title: AWS usage up 22%
+    input: {seed: 7, changes: [{type: vendor_change, dept: ENG, account: "6150", vendor: AWS, pct: 0.22}]}
+    expected: {cell: [ENG, "6150"], cause: {type: vendor, member: AWS}}
+  - id: r02
+    group: routine
+    title: Two sales hires ahead of plan
+    input: {seed: 7, changes: [{type: hires, dept: SAL, n: 2}]}
+    expected: {cell: [SAL, "6000"], cause: {type: headcount, member: SAL}}
+  - id: r03
+    group: routine
+    title: An engineering role still open
+    input: {seed: 11, changes: [{type: open_roles, dept: ENG, n: 1}]}
+    expected: {cell: [ENG, "6000"], cause: {type: headcount, member: ENG}}
+  - id: r04
+    group: routine
+    title: Snowflake credits down 30%
+    input: {seed: 11, changes: [{type: vendor_change, dept: DATA, account: "6150", vendor: Snowflake, pct: -0.30}]}
+    expected: {cell: [DATA, "6150"], cause: {type: vendor, member: Snowflake}}
+  - id: r05
+    group: routine
+    title: New data tool with no budget line
+    input: {seed: 7, changes: [{type: new_vendor, dept: DATA, account: "6100", vendor: dbt Labs, amount: 7200}]}
+    expected: {cell: [DATA, "6100"], cause: {type: new_vendor, member: dbt Labs}}
+  - id: r06
+    group: routine
+    title: Warehouse temps up 25% in peak season
+    input: {seed: 13, changes: [{type: vendor_change, dept: OPS-US, account: "6050", vendor: Harbor Staffing, pct: 0.25}]}
+    expected: {cell: [OPS-US, "6050"], cause: {type: vendor, member: Harbor Staffing}}
+  - id: r07
+    group: routine
+    title: Sales travel cut by 40%
+    input: {seed: 13, changes: [{type: vendor_change, dept: SAL, account: "6200", vendor: Concur travel, pct: -0.40}]}
+    expected: {cell: [SAL, "6200"], cause: {type: vendor, member: Concur travel}}
+  - id: r08
+    group: routine
+    title: Contract dev hours cut by 60%
+    input: {seed: 17, changes: [{type: vendor_change, dept: ENG, account: "6050", vendor: Northbeam Dev, pct: -0.60}]}
+    expected: {cell: [ENG, "6050"], cause: {type: vendor, member: Northbeam Dev}}
+  - id: h01
+    group: hard
+    title: Salesforce renewal billed a month early
+    input: {seed: 7, changes: [{type: timing_early, dept: SAL, vendor: Salesforce}]}
+    expected: {cell: [SAL, "6100"], cause: {type: timing, member: Salesforce}}
+  - id: h02
+    group: hard
+    title: Audit firm has not billed yet
+    input: {seed: 11, changes: [{type: timing_late, dept: FIN, vendor: Audit firm}]}
+    expected: {cell: [FIN, "6300"], cause: {type: timing, member: Audit firm}}
+  - id: h03
+    group: hard
+    title: Euro at 1.19, Amsterdam spend flat in euros
+    input: {seed: 7, eur_rate: 1.19, changes: [{type: fx}]}
+    expected: {cell: [OPS-NL, "6000"], cause: {type: fx, member: EUR}}
+  - id: h04
+    group: hard
+    title: Euro at 0.97, Amsterdam spend flat in euros
+    input: {seed: 13, eur_rate: 0.97, changes: [{type: fx}]}
+    expected: {cell: [OPS-NL, "6000"], cause: {type: fx, member: EUR}}
+  - id: h05
+    group: hard
+    title: Amsterdam hires while the euro moves
+    input: {seed: 17, eur_rate: 1.12, changes: [{type: hires, dept: OPS-NL, n: 2}]}
+    expected: {cell: [OPS-NL, "6000"], cause: {type: headcount, member: OPS-NL}}
+  - id: k01
+    group: hold
+    title: Travel invoice posted the day after lock
+    input: {seed: 7, changes: [{type: late_entry, dept: CS, account: "6200", vendor: Concur travel, amount: 4800}]}
+    expected: {cell: [CS, "6200"], hold: late_entry}
+  - id: k02
+    group: hold
+    title: Engineering travel with no budget
+    input: {seed: 11, changes: [{type: unbudgeted_account, dept: ENG, account: "6200", vendor: Concur travel, amount: 6100}]}
+    expected: {cell: [ENG, "6200"], hold: unbudgeted, cause: {type: new_vendor, member: Concur travel}}
+  - id: k03
+    group: hold
+    title: $55K AWS overage
+    input: {seed: 13, changes: [{type: large, dept: ENG, vendor: AWS, amount: 55000}]}
+    expected: {cell: [ENG, "6150"], hold: large, cause: {type: vendor, member: AWS}}
+  - id: k04
+    group: hold
+    title: Small legal bill posted after lock
+    input: {seed: 17, changes: [{type: late_entry, dept: FIN, account: "6300", vendor: Outside counsel, amount: 1900}]}
+    expected: {cell: [FIN, "6300"], hold: late_entry}
+  - id: k05
+    group: hold
+    title: Salesforce renewal early, above the review line
+    input: {seed: 13, changes: [{type: timing_early, dept: SAL, vendor: Salesforce}]}
+    expected: {cell: [SAL, "6100"], hold: large, cause: {type: timing, member: Salesforce}}
+  - id: t01
+    group: trap
+    title: Extract pulled before the last AP batch
+    input: {seed: 7, changes: [{type: missing_lines, n: 20}]}
+    expected: {issue: extract_does_not_tie}
+  - id: t02
+    group: trap
+    title: Saved search exported a page twice
+    input: {seed: 11, changes: [{type: duplicate_lines, n: 12}]}
+    expected: {issue: duplicate_lines}
+  - id: t03
+    group: trap
+    title: New department code nobody mapped
+    input: {seed: 13, changes: [{type: unmapped_department, dept: CS, code: CS-EMEA}]}
+    expected: {issue: unmapped_department}
+  - id: t04
+    group: trap
+    title: Lines on a new account outside the chart
+    input: {seed: 17, changes: [{type: unmapped_account, account: "6100", code: "6105", n: 3}]}
+    expected: {issue: unmapped_account}
+  - id: t05
+    group: trap
+    title: Extract missing one late batch, with AWS up
+    input: {seed: 17, changes: [{type: vendor_change, dept: ENG, account: "6150", vendor: AWS, pct: 0.2}, {type: missing_lines, n: 6}]}
+    expected: {issue: extract_does_not_tie}
+  - id: c01
+    group: control
+    title: A quiet month
+    input: {seed: 7, changes: []}
+    expected: {}
+  - id: c02
+    group: control
+    title: A quiet month, euro at budget rate
+    input: {seed: 23, changes: []}
+    expected: {}
