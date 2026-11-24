@@ -26,9 +26,9 @@ Agent cost 0.0000 USD, judge cost 0.0000 USD, mean latency 0.9 ms per case.
 | Contract dev hours cut by 60% | routine | 1 of 1 runs |  |
 | Salesforce renewal billed a month early | hard | 1 of 1 runs |  |
 | Audit firm has not billed yet | hard | 1 of 1 runs |  |
-| Euro at 1.19, Amsterdam spend flat in euros | hard | 1 of 1 runs |  |
-| Euro at 0.97, Amsterdam spend flat in euros | hard | 1 of 1 runs |  |
-| Amsterdam hires while the euro moves | hard | 1 of 1 runs |  |
+| Euro at 1.19, Europe spend flat in euros | hard | 1 of 1 runs |  |
+| Euro at 0.97, Europe spend flat in euros | hard | 1 of 1 runs |  |
+| Europe hires while the euro moves | hard | 1 of 1 runs |  |
 | Travel invoice posted the day after lock | hold | 1 of 1 runs |  |
 | Engineering travel with no budget | hold | 1 of 1 runs |  |
 | $55K AWS overage | hold | 1 of 1 runs |  |

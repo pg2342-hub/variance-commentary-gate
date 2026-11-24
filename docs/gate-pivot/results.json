@@ -14,7 +14,7 @@
     ],
     "total_cost_usd": 0.0,
     "total_judge_cost_usd": 0.0,
-    "mean_latency_s": 0.000805
+    "mean_latency_s": 0.000823
   },
   "gate_result": {
     "decision": "no-go",
@@ -180,7 +180,7 @@
           "passed": true,
           "failed_checks": [],
           "error": "",
-          "latency_s": 0.0009,
+          "latency_s": 0.001,
           "cost_usd": 0.0,
           "judge_cost_usd": 0.0,
           "verdicts": {
@@ -538,7 +538,7 @@
             "names_the_cause"
           ],
           "error": "",
-          "latency_s": 0.0008,
+          "latency_s": 0.0009,
           "cost_usd": 0.0,
           "judge_cost_usd": 0.0,
           "verdicts": {
@@ -896,7 +896,7 @@
             "names_the_cause"
           ],
           "error": "",
-          "latency_s": 0.0008,
+          "latency_s": 0.001,
           "cost_usd": 0.0,
           "judge_cost_usd": 0.0,
           "verdicts": {
@@ -3741,7 +3741,7 @@
     {
       "id": "h03",
       "group": "hard",
-      "title": "Euro at 1.19, Amsterdam spend flat in euros",
+      "title": "Euro at 1.19, Europe spend flat in euros",
       "runs": [
         {
           "run": 1,
@@ -4100,7 +4100,7 @@
     {
       "id": "h04",
       "group": "hard",
-      "title": "Euro at 0.97, Amsterdam spend flat in euros",
+      "title": "Euro at 0.97, Europe spend flat in euros",
       "runs": [
         {
           "run": 1,
@@ -4459,7 +4459,7 @@
     {
       "id": "h05",
       "group": "hard",
-      "title": "Amsterdam hires while the euro moves",
+      "title": "Europe hires while the euro moves",
       "runs": [
         {
           "run": 1,
@@ -4826,7 +4826,7 @@
             "holds_the_exception"
           ],
           "error": "",
-          "latency_s": 0.0007,
+          "latency_s": 0.0008,
           "cost_usd": 0.0,
           "judge_cost_usd": 0.0,
           "verdicts": {
@@ -6635,7 +6635,7 @@
             "every_figure_ties"
           ],
           "error": "",
-          "latency_s": 0.001,
+          "latency_s": 0.0009,
           "cost_usd": 0.0,
           "judge_cost_usd": 0.0,
           "verdicts": {
@@ -6867,13 +6867,13 @@
                 "material": true,
                 "cause": {
                   "type": "vendor",
-                  "member": "Schiphol lease",
+                  "member": "Europe office lease",
                   "amount": -19056.4,
                   "actual": 6863.6,
                   "budget": 25920.0
                 },
                 "holds": [],
-                "text": "Facilities is $19.1K under budget (-74%), mainly Schiphol lease at $6.9K against $25.9K budgeted."
+                "text": "Facilities is $19.1K under budget (-74%), mainly Europe office lease at $6.9K against $25.9K budgeted."
               },
               {
                 "dept": "OPS-US",
@@ -7434,7 +7434,7 @@
             "every_figure_ties"
           ],
           "error": "",
-          "latency_s": 0.0008,
+          "latency_s": 0.0009,
           "cost_usd": 0.0,
           "judge_cost_usd": 0.0,
           "verdicts": {
@@ -7847,7 +7847,7 @@
             "every_figure_ties"
           ],
           "error": "",
-          "latency_s": 0.0008,
+          "latency_s": 0.001,
           "cost_usd": 0.0,
           "judge_cost_usd": 0.0,
           "verdicts": {
@@ -8652,7 +8652,7 @@
           "passed": true,
           "failed_checks": [],
           "error": "",
-          "latency_s": 0.0009,
+          "latency_s": 0.0008,
           "cost_usd": 0.0,
           "judge_cost_usd": 0.0,
           "verdicts": {
@@ -8989,7 +8989,7 @@
           "passed": true,
           "failed_checks": [],
           "error": "",
-          "latency_s": 0.0009,
+          "latency_s": 0.0008,
           "cost_usd": 0.0,
           "judge_cost_usd": 0.0,
           "verdicts": {

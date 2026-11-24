@@ -14,7 +14,7 @@
     ],
     "total_cost_usd": 0.0,
     "total_judge_cost_usd": 0.0,
-    "mean_latency_s": 0.000866
+    "mean_latency_s": 0.000869
   },
   "gate_result": {
     "decision": "go",
@@ -113,7 +113,7 @@
           "passed": true,
           "failed_checks": [],
           "error": "",
-          "latency_s": 0.0011,
+          "latency_s": 0.0012,
           "cost_usd": 0.0,
           "judge_cost_usd": 0.0,
           "verdicts": {
@@ -457,8 +457,9 @@
             },
             "tie_out": {
               "ok": true,
-              "figures_checked": 2,
-              "max_difference": 0.0
+              "figures_checked": 3,
+              "max_difference": 0.0,
+              "breaks": []
             },
             "truth": {
               "planted": [
@@ -862,8 +863,9 @@
             },
             "tie_out": {
               "ok": true,
-              "figures_checked": 2,
-              "max_difference": 0.0
+              "figures_checked": 3,
+              "max_difference": 0.0,
+              "breaks": []
             },
             "truth": {
               "planted": [
@@ -1267,8 +1269,9 @@
             },
             "tie_out": {
               "ok": true,
-              "figures_checked": 2,
-              "max_difference": 0.0
+              "figures_checked": 3,
+              "max_difference": 0.0,
+              "breaks": []
             },
             "truth": {
               "planted": [
@@ -1673,8 +1676,9 @@
             },
             "tie_out": {
               "ok": true,
-              "figures_checked": 2,
-              "max_difference": 0.0
+              "figures_checked": 3,
+              "max_difference": 0.0,
+              "breaks": []
             },
             "truth": {
               "planted": [
@@ -1735,7 +1739,7 @@
           "passed": true,
           "failed_checks": [],
           "error": "",
-          "latency_s": 0.0009,
+          "latency_s": 0.0011,
           "cost_usd": 0.0,
           "judge_cost_usd": 0.0,
           "verdicts": {
@@ -2079,8 +2083,9 @@
             },
             "tie_out": {
               "ok": true,
-              "figures_checked": 2,
-              "max_difference": 0.0
+              "figures_checked": 3,
+              "max_difference": 0.0,
+              "breaks": []
             },
             "truth": {
               "planted": [
@@ -2485,8 +2490,9 @@
             },
             "tie_out": {
               "ok": true,
-              "figures_checked": 2,
-              "max_difference": 0.0
+              "figures_checked": 3,
+              "max_difference": 0.0,
+              "breaks": []
             },
             "truth": {
               "planted": [
@@ -2891,8 +2897,9 @@
             },
             "tie_out": {
               "ok": true,
-              "figures_checked": 2,
-              "max_difference": 0.0
+              "figures_checked": 3,
+              "max_difference": 0.0,
+              "breaks": []
             },
             "truth": {
               "planted": [
@@ -2953,7 +2960,7 @@
           "passed": true,
           "failed_checks": [],
           "error": "",
-          "latency_s": 0.0008,
+          "latency_s": 0.0009,
           "cost_usd": 0.0,
           "judge_cost_usd": 0.0,
           "verdicts": {
@@ -3297,8 +3304,9 @@
             },
             "tie_out": {
               "ok": true,
-              "figures_checked": 2,
-              "max_difference": 0.0
+              "figures_checked": 3,
+              "max_difference": 0.0,
+              "breaks": []
             },
             "truth": {
               "planted": [
@@ -3707,8 +3715,9 @@
             },
             "tie_out": {
               "ok": true,
-              "figures_checked": 2,
-              "max_difference": 0.0
+              "figures_checked": 3,
+              "max_difference": 0.0,
+              "breaks": []
             },
             "truth": {
               "planted": [
@@ -4114,8 +4123,9 @@
             },
             "tie_out": {
               "ok": true,
-              "figures_checked": 2,
-              "max_difference": 0.0
+              "figures_checked": 3,
+              "max_difference": 0.0,
+              "breaks": []
             },
             "truth": {
               "planted": [
@@ -4169,7 +4179,7 @@
     {
       "id": "h03",
       "group": "hard",
-      "title": "Euro at 1.19, Amsterdam spend flat in euros",
+      "title": "Euro at 1.19, Europe spend flat in euros",
       "runs": [
         {
           "run": 1,
@@ -4520,8 +4530,9 @@
             },
             "tie_out": {
               "ok": true,
-              "figures_checked": 2,
-              "max_difference": 0.0
+              "figures_checked": 3,
+              "max_difference": 0.0,
+              "breaks": []
             },
             "truth": {
               "planted": [
@@ -4576,7 +4587,7 @@
     {
       "id": "h04",
       "group": "hard",
-      "title": "Euro at 0.97, Amsterdam spend flat in euros",
+      "title": "Euro at 0.97, Europe spend flat in euros",
       "runs": [
         {
           "run": 1,
@@ -4927,8 +4938,9 @@
             },
             "tie_out": {
               "ok": true,
-              "figures_checked": 2,
-              "max_difference": 0.0
+              "figures_checked": 3,
+              "max_difference": 0.0,
+              "breaks": []
             },
             "truth": {
               "planted": [
@@ -4983,7 +4995,7 @@
     {
       "id": "h05",
       "group": "hard",
-      "title": "Amsterdam hires while the euro moves",
+      "title": "Europe hires while the euro moves",
       "runs": [
         {
           "run": 1,
@@ -5334,8 +5346,9 @@
             },
             "tie_out": {
               "ok": true,
-              "figures_checked": 2,
-              "max_difference": 0.0
+              "figures_checked": 3,
+              "max_difference": 0.0,
+              "breaks": []
             },
             "truth": {
               "planted": [
@@ -5745,8 +5758,9 @@
             },
             "tie_out": {
               "ok": true,
-              "figures_checked": 2,
-              "max_difference": 0.0
+              "figures_checked": 3,
+              "max_difference": 0.0,
+              "breaks": []
             },
             "truth": {
               "planted": [
@@ -6169,8 +6183,9 @@
             },
             "tie_out": {
               "ok": true,
-              "figures_checked": 2,
-              "max_difference": 0.0
+              "figures_checked": 3,
+              "max_difference": 0.0,
+              "breaks": []
             },
             "truth": {
               "planted": [
@@ -6585,8 +6600,9 @@
             },
             "tie_out": {
               "ok": true,
-              "figures_checked": 2,
-              "max_difference": 0.0
+              "figures_checked": 3,
+              "max_difference": 0.0,
+              "breaks": []
             },
             "truth": {
               "planted": [
@@ -7002,8 +7018,9 @@
             },
             "tie_out": {
               "ok": true,
-              "figures_checked": 2,
-              "max_difference": 0.0
+              "figures_checked": 3,
+              "max_difference": 0.0,
+              "breaks": []
             },
             "truth": {
               "planted": [
@@ -7418,8 +7435,9 @@
             },
             "tie_out": {
               "ok": true,
-              "figures_checked": 2,
-              "max_difference": 0.0
+              "figures_checked": 3,
+              "max_difference": 0.0,
+              "breaks": []
             },
             "truth": {
               "planted": [
@@ -7480,7 +7498,7 @@
           "passed": true,
           "failed_checks": [],
           "error": "",
-          "latency_s": 0.0008,
+          "latency_s": 0.0007,
           "cost_usd": 0.0,
           "judge_cost_usd": 0.0,
           "verdicts": {
@@ -7514,7 +7532,7 @@
             "issues": [
               {
                 "code": "extract_does_not_tie",
-                "detail": "The extract misses the trial balance by -$248.9K across 11 department and account cells."
+                "detail": "The extract is $248.9K short of the trial balance across 11 department and account cells."
               }
             ],
             "variances": [],
@@ -7660,7 +7678,7 @@
           "passed": true,
           "failed_checks": [],
           "error": "",
-          "latency_s": 0.0008,
+          "latency_s": 0.0007,
           "cost_usd": 0.0,
           "judge_cost_usd": 0.0,
           "verdicts": {
@@ -7874,7 +7892,7 @@
             "issues": [
               {
                 "code": "extract_does_not_tie",
-                "detail": "The extract misses the trial balance by -$63.1K across 5 department and account cells."
+                "detail": "The extract is $63.1K short of the trial balance across 5 department and account cells."
               }
             ],
             "variances": [],
@@ -7940,7 +7958,7 @@
           "passed": true,
           "failed_checks": [],
           "error": "",
-          "latency_s": 0.0009,
+          "latency_s": 0.0008,
           "cost_usd": 0.0,
           "judge_cost_usd": 0.0,
           "verdicts": {
@@ -8231,7 +8249,8 @@
             "tie_out": {
               "ok": true,
               "figures_checked": 0,
-              "max_difference": 0.0
+              "max_difference": 0.0,
+              "breaks": []
             },
             "truth": {
               "planted": [],
@@ -8282,7 +8301,7 @@
           "passed": true,
           "failed_checks": [],
           "error": "",
-          "latency_s": 0.0011,
+          "latency_s": 0.0008,
           "cost_usd": 0.0,
           "judge_cost_usd": 0.0,
           "verdicts": {
@@ -8573,7 +8592,8 @@
             "tie_out": {
               "ok": true,
               "figures_checked": 0,
-              "max_difference": 0.0
+              "max_difference": 0.0,
+              "breaks": []
             },
             "truth": {
               "planted": [],

@@ -11,7 +11,7 @@ Monthly variance commentary is the work an FP&A analyst repeats every close: pul
 1. **Data checks.** Every department code is in the department map, every account is in the chart, no journal line appears twice, and the extract matches the trial balance for every department and account to the dollar. Any failure stops the draft and says why.
 2. **Variances.** Actual against budget for every department and account. A line of commentary is written at $5K and 5% off budget, or for spend with no budget.
 3. **One cause per variance**, from the lines behind it: a vendor's spend against its budget line, a vendor with no budget line, headcount against plan, timing (an annual invoice billed in a different month than budgeted, or a monthly one not billed yet), or the euro against the budget rate for the European subsidiary.
-4. **The query behind every figure.** Each number in a sentence comes from a listed SuiteQL-style query, and every actual and budget figure is re-run against the trial balance and the budget file before anything sends.
+4. **The query behind every figure.** Each number in a sentence comes from a listed SuiteQL-style query. Before anything sends, every query is evaluated again from the journal lines or the budget file, independently of the draft, and every department and account total is checked against the trial balance. A figure that does not tie stops the send.
 5. **Holds.** Even once commentary sends without approval, three kinds of line wait for FP&A: a variance above $40K, an account with no budget, and any entry posted after the books locked.
 
 ```
@@ -25,7 +25,7 @@ python -m vcg --sql
 
 ## The back-test
 
-Before a live close, `python -m vcg.backtest` reruns three closes (September to November) and compares the drafter's cause with FP&A's for the 20 largest variances in each. The bar is 18 of 20 in every close. Result: 20, 18 and 19 of 20. The changed causes are the ones only FP&A could know from outside the ledger, an invoice coded to the wrong department and a late invoice caught up the next month, which is why the first live closes stay on approval.
+Before a live close, `python -m vcg.backtest` reruns three closes (September to November) and compares the drafter's cause with FP&A's for the 20 largest variances in each. The bar is 18 of 20 in every close. Result: 20, 18 and 19 of 20 (on the lines that actually get commentary, 4 of 4, 4 of 6 and 7 of 8). Read that with care. The closes and FP&A's answer key are made up, and wherever nothing was planted the key uses the drafter's own rule (the largest gap in the ledger), so those cells agree by construction. The real test is the planted items only FP&A could know from outside the ledger, an invoice coded to the wrong department and a late invoice caught up the next month. The drafter gets every one of them wrong, and the late-invoice line would have sent without a hold. That is why the first live closes stay on approval.
 
 ## The eval
 
@@ -64,4 +64,5 @@ CI runs ruff, the tests, the gate, the seed sweep and the back-test on every pus
 
 - All data is synthetic. The company, its departments, budget, headcount and FP&A's answer key are made up. Vendor names are public software and services used as realistic payees; nothing here reflects their real prices.
 - The causes are rules, not a model. This is the deterministic layer an agent's commentary should tie back to, and the gate an agent would have to pass before its commentary sends on its own.
+- Headcount is counted as distinct people paid in the month, so a leaver and a same-month replacement read as one extra head.
 - One cause per variance. A variance with two similar-sized drivers gets the larger one; FP&A's review in the approved closes is where a second driver gets added.

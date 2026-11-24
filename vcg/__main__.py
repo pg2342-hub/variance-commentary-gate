@@ -26,7 +26,7 @@ def main() -> None:
         return
     t = out["tie_out"]
     gap = t["max_difference"]
-    print(f"Tie-out: {t['figures_checked']} figures re-run against the trial balance and budget, largest difference ${gap:.2f}\n")
+    print(f"Tie-out: {t['figures_checked']} queries re-run, totals tied to the trial balance, largest difference ${gap:.2f}\n")
     for v in out["variances"]:
         if not v["material"]:
             continue

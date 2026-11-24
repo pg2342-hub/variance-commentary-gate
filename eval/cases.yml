@@ -55,17 +55,17 @@ cases:
     expected: {cell: [FIN, "6300"], cause: {type: timing, member: Audit firm}}
   - id: h03
     group: hard
-    title: Euro at 1.19, Amsterdam spend flat in euros
+    title: Euro at 1.19, Europe spend flat in euros
     input: {seed: 7, eur_rate: 1.19, changes: [{type: fx}]}
     expected: {cell: [OPS-NL, "6000"], cause: {type: fx, member: EUR}}
   - id: h04
     group: hard
-    title: Euro at 0.97, Amsterdam spend flat in euros
+    title: Euro at 0.97, Europe spend flat in euros
     input: {seed: 13, eur_rate: 0.97, changes: [{type: fx}]}
     expected: {cell: [OPS-NL, "6000"], cause: {type: fx, member: EUR}}
   - id: h05
     group: hard
-    title: Amsterdam hires while the euro moves
+    title: Europe hires while the euro moves
     input: {seed: 17, eur_rate: 1.12, changes: [{type: hires, dept: OPS-NL, n: 2}]}
     expected: {cell: [OPS-NL, "6000"], cause: {type: headcount, member: OPS-NL}}
   - id: k01

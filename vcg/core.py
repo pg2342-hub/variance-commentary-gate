@@ -52,7 +52,7 @@ def data_checks(close: Close) -> list[dict]:
             issues.append(
                 {
                     "code": "extract_does_not_tie",
-                    "detail": f"The extract misses the trial balance by {money(total, True)} "
+                    "detail": f"The extract is {money(abs(total))} {'short of' if total < 0 else 'over'} the trial balance "
                     f"across {len(breaks)} department and account cells.",
                 }
             )
@@ -87,10 +87,11 @@ def _budget_cells(close: Close):
     return cells, by_vendor
 
 
-def _later_budget(close: Close, dept: str, vendor: str):
+def _later_budget(close: Close, dept: str, acct: str, vendor: str):
+    """The next budgeted bill for this vendor later in the fiscal year (the budget file covers one year)."""
     after = MONTHS[MONTHS.index(close.month) + 1 :]
     for b in close.budget:
-        if b["dept"] == dept and b["vendor"] == vendor and b["month"] in after:
+        if b["dept"] == dept and b["account"] == acct and b["vendor"] == vendor and b["month"] in after:
             return b
     return None
 
@@ -141,7 +142,7 @@ def explain(close: Close, dept: str, acct: str, lines: list, budget_v: dict, q: 
     )
     out = {"member": vendor, "amount": round(amt, 2), "queries": [qn], "actual": round(actual, 2), "budget": round(budgeted, 2)}
     if not budgeted:
-        later = _later_budget(close, dept, vendor)
+        later = _later_budget(close, dept, acct, vendor)
         if later and abs(later["amount"] - actual) <= 0.1 * later["amount"]:
             return out | {"type": "timing", "budget_month": later["month"]}
         return out | {"type": "new_vendor"}
@@ -250,6 +251,9 @@ def draft(close: Close) -> dict:
         out.append(v)
 
     tie = tie_out(close, q)
+    if not tie["ok"]:  # never send a figure that does not tie
+        issue = {"code": "figure_does_not_tie", "detail": f"{len(tie['breaks'])} figures do not tie: {', '.join(tie['breaks'])}."}
+        return {"published": False, "issues": [issue], "variances": out, "commentary": {}, "queries": q.items, "tie_out": tie}
     commentary = defaultdict(lambda: {"send": [], "held": []})
     for v in out:
         if v["material"]:
@@ -257,18 +261,33 @@ def draft(close: Close) -> dict:
     return {"published": True, "issues": [], "variances": out, "commentary": dict(commentary), "queries": q.items, "tie_out": tie}
 
 
+def run_query(close: Close, item: dict) -> float:
+    """Evaluate one figure's query again, from the journal lines or the budget file, independently of the draft."""
+    k, kind = item["key"], item["kind"]
+    cell = (k["dept"], k["account"])
+    if kind == "budget":
+        return sum(b["amount"] for b in close.budget if b["month"] == close.month and (b["dept"], b["account"]) == cell)
+    rows = [x for x in close.lines if (x["department"], x["account"]) == cell]
+    if kind == "vendor":
+        rows = [x for x in rows if x["payee"] == k["vendor"]]
+    if kind == "headcount":
+        return float(len({x["payee"] for x in rows}))
+    if kind == "local":
+        return sum(x["amount_local"] for x in rows)
+    return sum(x["amount"] for x in rows)
+
+
 def tie_out(close: Close, q: Queries) -> dict:
-    """Re-run every figure the commentary uses against the trial balance and the budget file."""
-    bud_cells, _ = _budget_cells(close)
-    checked, worst = 0, 0.0
-    for item in q.items.values():
-        k = item["key"]
+    """Re-run every query behind a figure, and check every department and account total against the trial balance."""
+    checked, worst, breaks = 0, 0.0, []
+    for qid, item in q.items.items():
+        diffs = [abs(item["value"] - run_query(close, item))]
         if item["kind"] == "actual":
-            ref = close.trial_balance.get((k["dept"], k["account"]), 0)
-        elif item["kind"] == "budget":
-            ref = bud_cells.get((k["dept"], k["account"]), 0)
-        else:
-            continue
+            k = item["key"]
+            diffs.append(abs(item["value"] - close.trial_balance.get((k["dept"], k["account"]), 0)))
         checked += 1
-        worst = max(worst, abs(item["value"] - ref))
-    return {"ok": worst <= TIE_TOLERANCE, "figures_checked": checked, "max_difference": round(worst, 2)}
+        d = max(diffs)
+        worst = max(worst, d)
+        if d > TIE_TOLERANCE:
+            breaks.append(qid)
+    return {"ok": not breaks, "figures_checked": checked, "max_difference": round(worst, 2), "breaks": breaks}

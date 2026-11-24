@@ -2,7 +2,8 @@
 
 For each close, take the 20 largest variances and compare the drafter's cause with FP&A's. The answer key
 is synthetic. Where something was planted, FP&A's cause is the planted one; elsewhere it is the largest
-vendor gap in the ledger. Each close also plants things only FP&A could know from outside the ledger
+vendor gap in the ledger, which is the drafter's own rule, so those cells agree by construction. The test that
+matters is the planted items. Each close also plants things only FP&A could know from outside the ledger
 (an invoice coded to the wrong department, a late invoice caught up), so a data-only draft cannot get every one.
 """
 
@@ -125,6 +126,7 @@ def run_close(scenario: dict) -> dict:
             }
         )
     kept = sum(r["kept"] for r in rows)
+    written = [r for r in rows if r["material"]]
     return {
         "month": close.month,
         "kept": kept,
@@ -132,6 +134,8 @@ def run_close(scenario: dict) -> dict:
         "passes": kept >= KEEP,
         "tie_out": out["tie_out"],
         "rows": rows,
+        "written": len(written),
+        "written_kept": sum(r["kept"] for r in written),
         "held": sum(1 for v in out["variances"] if v.get("holds")),
     }
 

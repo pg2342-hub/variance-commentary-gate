@@ -112,7 +112,7 @@ details summary{cursor:pointer;color:var(--ink-2)}
 .qv{font:500 12px/1 var(--mono);font-variant-numeric:tabular-nums}
 .tiebar{display:flex;flex-wrap:wrap;gap:8px 24px;align-items:baseline;margin:0 0 16px;color:var(--ink-2);font-size:15px}
 .tiebar b{font:400 30px/1 var(--serif);color:var(--ink);margin-right:6px}
-.btwrap{border:1px solid var(--rule);border-radius:16px;background:#fbfaf6;padding:18px 20px 12px}
+.btwrap{margin-top:16px;border:1px solid var(--rule);border-radius:16px;background:#fbfaf6;padding:18px 20px 12px}
 svg.bt{width:100%;height:auto;display:block}
 svg.bt .k{fill:var(--green)}
 svg.bt .c{fill:var(--paper);stroke:var(--ink);stroke-width:1.5}
@@ -148,16 +148,16 @@ td.say{color:var(--ink-2);font-size:14px}
   <p class="point">A wrong cause sent to a department head costs FP&amp;A more trust than the hours the draft saves. So the drafter only writes a number it can trace to a query, refuses to draft on an extract that does not match the ledger, and keeps three kinds of line on approval even after go-live: <b>a variance above {{HOLD}}</b>, <b>an account with no budget</b>, and <b>any entry posted after the books locked</b>.</p>
 
   <h2 id="november">The November draft</h2>
-  <div class="tiebar"><span><b>{{TIEN}}</b>figures re-run against the trial balance and budget</span><span><b>{{TIEMAX}}</b>largest difference</span></div>
+  <div class="tiebar"><span><b>{{TIEN}}</b>figures whose queries were re-run and tied to the trial balance</span><span><b>{{TIEMAX}}</b>largest difference</span></div>
   <div class="seg" role="radiogroup" aria-label="Show lines"><button type="button" role="radio" aria-checked="true" data-s="all">All&nbsp; <span>{{NALL}}</span></button><button type="button" role="radio" aria-checked="false" data-s="send">Sends&nbsp; <span>{{NSEND}}</span></button><button type="button" role="radio" aria-checked="false" data-s="held">Held for FP&amp;A&nbsp; <span>{{NHELD}}</span></button></div>
   <div class="nov" id="nov">{{NOV}}</div>
   <p class="note">A line of commentary is written when a department and account is at least {{MAT}} and 5% off budget, or has spend with no budget. Everything else stays out of the email.</p>
 
   <h2 id="backtest">Back-test: does FP&amp;A keep the cause?</h2>
-  <p class="point">Before a live close, the drafter reruns the last three closes and FP&amp;A compares its causes with what they actually sent, for the 20 largest variances in each. The plan's bar is <b>18 of 20 in every close</b>. Kept here: <b>{{KEPT}}</b>.</p>
+  <p class="point">Before a live close, the drafter reruns the last three closes and FP&amp;A compares its causes with theirs for the 20 largest variances in each; the plan's bar is <b>18 of 20 in every close</b>. Here the closes and FP&amp;A's answer key are made up. Where nothing was planted, the key uses the same rule as the drafter (the largest gap in the ledger), so those squares agree by construction. The real test is the items planted that only FP&amp;A could know, and the drafter gets <b>every one of them wrong</b>. Kept: <b>{{KEPT}}</b> of 20; on the lines that actually get commentary, <b>{{WRITTEN}}</b>.</p>
   <div class="btwrap">{{BTSVG}}
   <div class="btlegend"><span><i class="k"></i>FP&amp;A kept the drafted cause</span><span><i class="c"></i>FP&amp;A changed it</span><span>Hover a square for the variance.</span></div></div>
-  <p class="note">Every change is something only FP&amp;A could know from outside the ledger:</p>
+  <p class="note">The misses, and why the first live closes stay on approval:</p>
   <ul class="changed">{{CHANGED}}</ul>
 
   <h2 id="traps">Bad extracts stop the draft</h2>
@@ -170,7 +170,7 @@ td.say{color:var(--ink-2);font-size:14px}
 
 <aside class="side" aria-label="About this build">
   <nav aria-label="On this page"><a href="#why">Why it matters</a><a href="#november">The November draft</a><a href="#backtest">Back-test</a><a href="#traps">Bad extracts</a><a href="#cases">Every case</a></nav>
-  <div><h3>Data</h3><p>All data is synthetic: a made-up freight forwarder with 8 departments, a US and a European subsidiary, NetSuite-style journal lines, a trial balance and a vendor-level budget. Vendor names are public software and services used as realistic payees. FP&amp;A's answer key in the back-test is invented, with planted items only FP&amp;A would know.</p></div>
+  <div><h3>Data</h3><p>All data is synthetic: a made-up freight forwarder with 8 departments, a US and a European subsidiary, NetSuite-style journal lines, a trial balance and a vendor-level budget. Vendor names are public software and services used as realistic payees. FP&amp;A's answer key in the back-test is invented: it matches the drafter's rule wherever nothing was planted, and differs on the planted items only FP&amp;A would know.</p></div>
   <div><h3>Run it yourself</h3><p>Python 3.9+, PyYAML and golive-gate.</p><pre>pip install -e ".[dev]"
 python -m vcg --sql
 golive run eval/golive.yml

@@ -146,12 +146,12 @@ def november(out):
 
 def backtest_svg(results):
     """Three closes, the 20 largest variances in each, one square per variance: kept or changed by FP&A."""
-    size, gap, left, top_pad, row_h = 26, 6, 118, 28, 54
+    size, gap, left, top_pad, row_h = 26, 6, 118, 32, 54
     width = left + TOP * (size + gap) + 96
     height = top_pad + len(results) * row_h
     parts = [f'<svg viewBox="0 0 {width} {height}" class="bt" role="img" aria-label="Back-test: causes FP&amp;A kept in each close">']
     x_gate = left + KEEP * (size + gap) - gap / 2
-    parts.append(f'<line class="gl" x1="{x_gate}" x2="{x_gate}" y1="10" y2="{height - 6}"/>')
+    parts.append(f'<line class="gl" x1="{x_gate}" x2="{x_gate}" y1="22" y2="{height - 6}"/>')
     parts.append(f'<text class="gt" x="{x_gate}" y="16" text-anchor="middle">{KEEP} of {TOP} needed</text>')
     for i, r in enumerate(results):
         y = top_pad + i * row_h
@@ -161,7 +161,8 @@ def backtest_svg(results):
             cx = left + j * (size + gap)
             cls = "k" if x["kept"] else "c"
             d = DEPARTMENTS[x["dept"]]
-            title = f"{d}, {ACCOUNTS[x['account']]}: ${x['variance']:,.0f}. " + (
+            amt = ("-" if x["variance"] < 0 else "") + f"${abs(x['variance']):,.0f}"
+            title = f"{d}, {ACCOUNTS[x['account']]}: {amt}. " + (
                 "FP&A kept the drafted cause." if x["kept"] else f"FP&A changed the cause to {CAUSE_WORDS[x['fpa']]}."
             )
             parts.append(f'<rect class="{cls}" x="{cx}" y="{y}" width="{size}" height="{size}" rx="5"><title>{E(title)}</title></rect>')
@@ -181,6 +182,8 @@ def changed_list(results):
                     real = "a Sales travel invoice coded to Customer Success, which shows on both departments"
                 else:
                     real = f"{CAUSE_WORDS[x['fpa']]}, a late invoice from the month before posted with this one"
+                    if not x["holds"]:
+                        real += ". This line would have sent without a hold"
                 items.append(
                     f"<li><b>{MONTH_NAME[r['month']]}, {E(d)}, {E(ACCOUNTS[x['account']])}.</b> Drafted as {drafted} "
                     f"({E(x['drafted_member'])}); FP&amp;A knows it is {real}.</li>"
@@ -213,6 +216,7 @@ def main():
     p1 = g1["summary"]["by_run"][0]
     p2 = g2["summary"]["by_run"][0]
     kept = ", ".join(f"{r['kept']}" for r in bt)
+    written = ", ".join(f"{r['written_kept']} of {r['written']}" for r in bt)
     page = (ROOT / "scripts" / "page.html").read_text()
     subs = {
         "{{VROWS}}": vrow(g1, "Gated drafter", "Data checks, tie-out, one cause per variance, holds")
@@ -227,6 +231,7 @@ def main():
         "{{BTSVG}}": backtest_svg(bt),
         "{{CHANGED}}": changed_list(bt),
         "{{KEPT}}": kept,
+        "{{WRITTEN}}": written,
         "{{TRAPS}}": traps(),
         "{{P1}}": f"{p1['passed']} of {p1['total']}",
         "{{P2}}": f"{p2['passed']} of {p2['total']}",

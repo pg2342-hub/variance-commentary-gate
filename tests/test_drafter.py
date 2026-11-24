@@ -57,4 +57,22 @@ def test_pivot_baseline_sends_a_bad_extract():
 def test_backtest_meets_18_of_20_in_every_close():
     results = backtest()
     assert [r["kept"] for r in results] == [20, 18, 19]
+    assert [(r["written_kept"], r["written"]) for r in results] == [(4, 4), (4, 6), (7, 8)]
     assert all(r["passes"] and r["tie_out"]["ok"] for r in results)
+
+
+def test_a_figure_that_does_not_tie_is_caught(monkeypatch):
+    import vcg.core as core
+
+    close = build({"seed": 3, "changes": [{"type": "vendor_change", "dept": "ENG", "account": "6150", "vendor": "AWS", "pct": 0.3}]})
+    real = core.explain
+
+    def off_by_500(*a, **k):  # a drafter bug: the vendor figure is written $500 off its query
+        out = real(*a, **k)
+        q = a[-1]
+        q.items[out["queries"][0]]["value"] += 500
+        return out
+
+    monkeypatch.setattr(core, "explain", off_by_500)
+    out = core.draft(close)
+    assert not out["published"] and out["issues"][0]["code"] == "figure_does_not_tie"
